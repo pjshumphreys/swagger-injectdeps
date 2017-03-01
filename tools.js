@@ -1,6 +1,6 @@
 module.exports = require('injectdeps')(
-['_', 'yamlSpec', 'swaggerMetadata', 'swaggerHelpers', 'js-yaml', 'logger'],
-function(_, yamlSpec, swaggerMetadataModule, swaggerHelpersModule, jsYamlModule, logger) {
+['_', 'swaggerSpecification', 'swaggerMetadata', 'swaggerHelpers', 'logger'],
+function(_, swaggerSpecification, swaggerMetadataModule, swaggerHelpersModule, logger) {
   const log = logger('swagger.app');
 
   function initSwaggerTools(spec, rlOrSO, callback) {
@@ -43,7 +43,6 @@ function(_, yamlSpec, swaggerMetadataModule, swaggerHelpersModule, jsYamlModule,
   }
 
   return new Promise(function(resolve, reject) {
-    const swaggerSpecification = jsYamlModule.safeLoad(yamlSpec);
     const spec = swaggerHelpersModule.getSpec(swaggerHelpersModule.getSwaggerVersion(swaggerSpecification), true);
 
     log.info('Identified Swagger version: %s', spec.version);

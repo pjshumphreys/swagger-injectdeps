@@ -15,20 +15,21 @@ const swaggerHelpers = require('swagger-tools/lib/helpers');
 function standardBindings() {
   return injector.getContainer()
     .bindName('_').toPlainObject(lodash)
+    .bindName('path').toPlainObject(path)
+    .bindName('fs').toPlainObject(fs)
     .bindName('swaggerMetadata').toPlainObject(swaggerMetadata)
     .bindName('swaggerHelpers').toPlainObject(swaggerHelpers)
     .bindName('js-yaml').toPlainObject(jsYaml)
     .bindName('bunyan').toPlainObject(bunyan)
     .bindName('logger').toObject(logger)
+    .bindName('swaggerSpecification').toObject(require('./yaml-loader'))
     .bindName('tools').toObject(require('./tools'));
 }
-
-const testYaml = fs.readFileSync(path.resolve('./test/swagger.yaml'), 'utf8');
 
 describe('metadata', () => {
   it('should return an appropriate input data coercion middleware', (done) => {
     const container = standardBindings()
-      .bindName('yamlSpec').toScalarValue(testYaml);
+      .bindName('swaggerFilePath').toScalarValue('./test/swagger.yaml');
 
     const toolsPromise = container.newObject('tools').catch((err) => {
       container.newObject('logger')('test').error(err);
@@ -60,7 +61,7 @@ describe('metadata', () => {
 
   it('should not add a swagger property to a route not specified in the yaml file', (done) => {
     const container = standardBindings()
-      .bindName('yamlSpec').toScalarValue(testYaml);
+      .bindName('swaggerFilePath').toScalarValue('./test/swagger.yaml');
 
     container.newObject('tools').then((tools) => {
       var request = httpMocks.createRequest({
