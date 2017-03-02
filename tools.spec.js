@@ -6,7 +6,7 @@ const jsYaml = require('js-yaml');
 const fs = require('fs');
 const path = require('path');
 const bunyan = require('bunyan');
-const logger = require('./logger');
+const logger = require('./test/logger');
 const httpMocks = require('node-mocks-http');
 
 const swaggerMetadata = require('swagger-tools/middleware/swagger-metadata');

@@ -1,7 +1,7 @@
 const expect = require('chai').expect;
 const injector = require('injectdeps');
 const bunyan = require('bunyan');
-const logger = require('./logger');
+const logger = require('./test/logger');
 const sinon = require('sinon');
 require('chai').use(require('sinon-chai'));
 const httpMocks = require('node-mocks-http');

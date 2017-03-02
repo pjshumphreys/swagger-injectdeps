@@ -3,7 +3,7 @@ const injector = require('injectdeps');
 const bunyan = require('bunyan');
 const sinon = require('sinon');
 require('sinon-as-promised');
-const logger = require('./logger');
+const logger = require('./test/logger');
 
 function standardBindings() {
   return injector.getContainer()
