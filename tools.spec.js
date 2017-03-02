@@ -31,53 +31,56 @@ describe('metadata', () => {
     const container = standardBindings()
       .bindName('swagger.filePath').toScalarValue(swaggerFilepath);
 
-    const toolsPromise = container.newObject('swagger.tools').catch((err) => {
-      container.newObject('logger')('test').error(err);
+    container
+      .newObject('swagger.tools')
+      .catch((err) => {
+        container.newObject('logger')('test').error(err);
 
-      done(err);
-    }).then((tools) => {
-      expect(tools).to.have.a.property('swaggerMetadata');
+        done(err);
+      })
+      .then((tools) => {
+        expect(tools).to.have.a.property('swaggerMetadata');
 
-      const request = httpMocks.createRequest({
+        const request = httpMocks.createRequest({
           method: 'GET',
           url: '/hello',
           query: {
             name: 'test',
             age: 10
           }
-      });
+        });
 
-      tools.swaggerMetadata()(request, httpMocks.createResponse(), function() {
-        expect(request).to.have.a.property('swagger');
-        expect(request.swagger).to.have.a.property('apiPath').that.equals('/hello');
-        expect(request.swagger.params.name).to.have.a.property('value').that.equals('test');
-        expect(request.swagger.params.location).to.have.a.property('value').to.be.undefined;
-        expect(request.swagger.params).to.not.have.a.property('age');
+        tools.swaggerMetadata()(request, httpMocks.createResponse(), function() {
+          expect(request).to.have.a.property('swagger');
+          expect(request.swagger).to.have.a.property('apiPath').that.equals('/hello');
+          expect(request.swagger.params.name).to.have.a.property('value').that.equals('test');
+          expect(request.swagger.params.location).to.have.a.property('value').to.be.undefined;
+          expect(request.swagger.params).to.not.have.a.property('age');
 
-        done();
+          done();
+        });
       });
-    });
   });
 
   it('should not add a swagger property to a route not specified in the yaml file', (done) => {
-    const container = standardBindings()
-      .bindName('swagger.filePath').toScalarValue(swaggerFilepath);
-
-    container.newObject('swagger.tools').then((tools) => {
-      const request = httpMocks.createRequest({
+    standardBindings()
+      .bindName('swagger.filePath').toScalarValue(swaggerFilepath)
+      .newObject('swagger.tools')
+      .then((tools) => {
+        const request = httpMocks.createRequest({
           method: 'GET',
           url: '/hellohello',
           query: {
             name: 'test',
             age: 10
           }
-      });
+        });
 
-      tools.swaggerMetadata()(request, httpMocks.createResponse(), function() {
-        expect(request).to.not.have.a.property('swagger');
+        tools.swaggerMetadata()(request, httpMocks.createResponse(), function() {
+          expect(request).to.not.have.a.property('swagger');
 
-        done();
+          done();
+        });
       });
-    });
   });
 });

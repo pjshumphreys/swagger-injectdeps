@@ -6,7 +6,7 @@ require('chai').use(require('sinon-chai'));
 const logger = require('./test/logger');
 const rawRouter = (req,res,next) => next();
 const mockValidator = ()=>(req,res,next)=>next();
-const errorHandler = ()=>(req,res,next)=>{};
+const errorHandler = ()=>()=>{};
 
 function standardBindings() {
   return injector.getContainer()
@@ -65,7 +65,7 @@ describe('app', () => {
     expect(appPromise).to.be.a('promise');
 
     appPromise
-      .then((app) => {
+      .then(() => {
         done(Error('It should not initialise the app'));
       })
       .catch((err) => {

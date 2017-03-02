@@ -1,10 +1,11 @@
 {
   "name": "swagger-injectdeps",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "mocha '*.spec.js'"
+    "test": "mocha '*.spec.js'",
+    "lint": "eslint '**/*.js'"
   },
   "dependencies": {
     "injectdeps": "^1.2.0",
@@ -15,6 +16,7 @@
   "devDependencies": {
     "bunyan": "^1.8.5",
     "chai": "^3.5.0",
+    "eslint": "^3.16.1",
     "express": "^4.14.1",
     "mocha": "^3.2.0",
     "node-mocks-http": "^1.6.1",

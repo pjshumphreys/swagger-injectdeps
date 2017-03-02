@@ -2,6 +2,8 @@ module.exports = require('injectdeps')(['container', 'logger'], function(contain
   return params => {
     params = params || {};
 
+    var log = logger('swagger');
+
     return (request, response, next) => {
       const methodAndPath = `${request.method} ${request.path}`;
       // First check if the path is supported by our swagger definition
@@ -31,6 +33,8 @@ module.exports = require('injectdeps')(['container', 'logger'], function(contain
       if(!methodName) {
         return next(new Error(`Swagger specification does not specify an operationId for ${methodAndPath}`));
       }
+
+      log.debug('Forwarding request %s to %s.%s', methodAndPath, controllerName, methodName);
 
       if(!controller.hasOwnProperty(methodName) || typeof controller[methodName] !== 'function'){
         return next(new Error(`Controller ${fullControllerName} can't handle operation ${methodName}`));

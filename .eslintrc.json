@@ -1,0 +1,29 @@
+{
+    "env": {
+        "es6": true,
+        "node": true
+    },
+    "extends": "eslint:recommended",
+    "rules": {
+        "no-trailing-spaces": ["error"],
+        "indent": [
+            "error",
+            2,
+            {
+                "FunctionDeclaration": {
+                    "parameters": 2,
+                    "body": 1
+                }
+            }
+        ],
+        "linebreak-style": [
+            "error",
+            "unix"
+        ],
+        "quotes": "off",
+        "semi": [
+            "error",
+            "always"
+        ]
+    }
+}

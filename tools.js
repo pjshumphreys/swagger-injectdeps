@@ -33,9 +33,9 @@ function(_, swaggerSpecification, swaggerMetadataModule, swaggerHelpersModule, l
     return results.errors.length + _.reduce(results.apiDeclarations || [], reduceInHasErrors, 0) > 0;
   }
 
-  function onSwaggerSpecError(err) {
+  function onSwaggerSpecError(err, specVersion, spec) {
     if (err.failedValidation === true) {
-      swaggerHelpersModule.printValidationResults(spec.version, rlOrSO, undefined, results, true);
+      swaggerHelpersModule.printValidationResults(specVersion, spec, undefined, err.results, true);
     }
     else {
       log.error('Error initializing middleware');
@@ -50,7 +50,7 @@ function(_, swaggerSpecification, swaggerMetadataModule, swaggerHelpersModule, l
 
     initSwaggerTools(spec, swaggerSpecification, function (err, tools) {
       if (err) {
-        onSwaggerSpecError(err);
+        onSwaggerSpecError(err, spec.version, spec);
         reject(err);
       }
       else {

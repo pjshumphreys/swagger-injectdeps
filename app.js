@@ -1,7 +1,26 @@
 module.exports = require('injectdeps')(
-  ['app.engine', 'swagger.tools', 'swagger.validator', 'swagger.router',
-    'app.errorHandler', 'app.config', 'app.pre', 'app.post', 'logger'],
-  function(engine, swaggerTools, swaggerValidator, swaggerRouter, errorHandler, config, pre, post, logger) {
+  [
+    'app.engine',
+    'swagger.tools',
+    'swagger.validator',
+    'swagger.router',
+    'app.errorHandler',
+    'app.config',
+    'app.pre',
+    'app.post',
+    'logger'
+  ],
+  function(
+      engine,
+      swaggerTools,
+      swaggerValidator,
+      swaggerRouter,
+      errorHandler,
+      config,
+      pre,
+      post,
+      logger
+    ) {
     const log = logger('swagger.app');
 
     return swaggerTools
@@ -30,4 +49,5 @@ module.exports = require('injectdeps')(
 
         return Promise.reject(err);
       });
-});
+  }
+);
