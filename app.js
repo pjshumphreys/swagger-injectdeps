@@ -14,22 +14,16 @@ module.exports = require('injectdeps')(
           app.use(middleware);
         }
 
-        app.use(swaggerRouter());
+        app.use(swaggerRouter({ prefix: config.prefix }));
 
-        for(let middleware in post){
+        for(let middleware in post) {
           app.use(middleware);
         }
 
-        return {
-          app,
-          start: function() {
-            log.info('Starting Swagger app on port %d', port);
-            app.listen();
-          }
-        };
+        return app;
       })
       .catch(err => {
-        // log.error(err, 'app failed to start');
+        log.error(err, 'app failed to start');
 
         return Promise.reject(err);
       });

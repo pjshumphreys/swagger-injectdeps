@@ -24,7 +24,9 @@ function helloRequestNoSwagger(){
 function helloRequestWithSwagger() {
   let req = helloRequestNoSwagger();
   req.swagger = {
-    "x-swagger-router-controller": "helloWorld",
+    path:{
+      "x-swagger-router-controller": "helloWorld"
+    },
     operation: {
       operationId: 'hello'
     }

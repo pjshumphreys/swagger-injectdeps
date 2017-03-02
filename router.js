@@ -12,7 +12,7 @@ module.exports = require('injectdeps')(['container', 'logger'], function(contain
         return next(new Error(`Unsupported endpoint ${methodAndPath}`));
       }
 
-      const controllerName = request.swagger['x-swagger-router-controller'];
+      const controllerName = request.swagger.path['x-swagger-router-controller'];
 
       if(!controllerName) {
         return next(new Error(`Swagger specification does not specify a controller for ${methodAndPath}`));
@@ -44,8 +44,14 @@ module.exports = require('injectdeps')(['container', 'logger'], function(contain
         next(); // always call next
       };
 
+      const fakeResponse = {
+        json(returnedObject) {
+          return response.contentType('application/json').json(returnedObject);
+        }
+      };
+
       try {
-        controller[methodName](request, response, nextHandler);
+        controller[methodName](request, fakeResponse, nextHandler);
       }
       catch (err) {
         // catch unhandled errors

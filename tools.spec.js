@@ -1,6 +1,5 @@
 const expect = require('chai').expect;
 const injector = require('injectdeps');
-const engine = require('express');
 const lodash = require('lodash');
 const jsYaml = require('js-yaml');
 const fs = require('fs');
@@ -15,14 +14,14 @@ const swaggerFilepath = path.resolve(__dirname, './test/swagger.yaml');
 
 function standardBindings() {
   return injector.getContainer()
-    .bindName('_').toPlainObject(lodash)
-    .bindName('path').toPlainObject(path)
     .bindName('fs').toPlainObject(fs)
-    .bindName('swagger.metadata').toPlainObject(swaggerMetadata)
-    .bindName('swagger.helpers').toPlainObject(swaggerHelpers)
+    .bindName('path').toPlainObject(path)
+    .bindName('_').toPlainObject(lodash)
     .bindName('js-yaml').toPlainObject(jsYaml)
     .bindName('bunyan').toPlainObject(bunyan)
     .bindName('logger').toObject(logger)
+    .bindName('swagger.metadata').toPlainObject(swaggerMetadata)
+    .bindName('swagger.helpers').toPlainObject(swaggerHelpers)
     .bindName('swagger.spec').toObject(require('./yaml-loader'))
     .bindName('swagger.tools').toObject(require('./tools'));
 }

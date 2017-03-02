@@ -17,7 +17,10 @@ function standardBindings() {
 
 describe('app', () => {
   it('should be initialised with the provided tools', (done) => {
-    const rawApp = {use: sinon.spy()};
+    const rawApp = {
+      use: sinon.spy(),
+      listen: sinon.spy()
+    };
     const engine = sinon.stub().returns(rawApp);
     const tools = Promise.resolve({swaggerMetadata: () => null});
     const rawRouter = sinon.stub().callsArg(2);
@@ -33,7 +36,7 @@ describe('app', () => {
     appPromise
       .then((app) => {
         expect(router).to.have.been.calledOnce;
-        expect(app).to.have.a.property('start').that.is.a('function');
+        expect(app).to.have.a.property('listen').that.is.a('function');
         expect(rawApp.use).to.have.been.calledTwice;
         done();
       })
@@ -54,7 +57,7 @@ describe('app', () => {
     expect(appPromise).to.be.a('promise');
     
     appPromise
-      .then((app) => { console.log(app);
+      .then((app) => {
         done(Error('It should not initialise the app'));
       })
       .catch((err) => {

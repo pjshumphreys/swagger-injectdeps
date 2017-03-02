@@ -1,6 +1,6 @@
 {
   "name": "swagger-injectdeps",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "",
   "main": "app.js",
   "scripts": {
@@ -19,7 +19,8 @@
     "mocha": "^3.2.0",
     "node-mocks-http": "^1.6.1",
     "sinon": "^1.17.7",
+    "sinon-as-promised": "^4.0.2",
     "sinon-chai": "^2.8.0",
-    "sinon-as-promised": "^4.0.2"
+    "supertest": "^3.0.0"
   }
 }
