@@ -1,6 +1,6 @@
 {
   "name": "swagger-injectdeps",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "",
   "main": "app.js",
   "scripts": {
@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "injectdeps": "^1.2.0",
-    "js-yaml": "^3.8.1",
+    "js-yaml": "^3.8.2",
     "lodash": "^4.17.4",
     "swagger-tools": "^0.10.1"
   },
