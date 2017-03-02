@@ -29,7 +29,7 @@ function standardBindings() {
 describe('metadata', () => {
   it('should return an appropriate input data coercion middleware', (done) => {
     const container = standardBindings()
-      .bindName('swaggerFilePath').toScalarValue('./test/swagger.yaml');
+      .bindName('swaggerFilePath').toScalarValue(path.resolve(__dirname, './test/swagger.yaml'));
 
     const toolsPromise = container.newObject('tools').catch((err) => {
       container.newObject('logger')('test').error(err);
@@ -38,7 +38,7 @@ describe('metadata', () => {
     }).then((tools) => {
       expect(tools).to.have.a.property('swaggerMetadata');
 
-      var request = httpMocks.createRequest({
+      const request = httpMocks.createRequest({
           method: 'GET',
           url: '/hello',
           query: {
@@ -64,7 +64,7 @@ describe('metadata', () => {
       .bindName('swaggerFilePath').toScalarValue('./test/swagger.yaml');
 
     container.newObject('tools').then((tools) => {
-      var request = httpMocks.createRequest({
+      const request = httpMocks.createRequest({
           method: 'GET',
           url: '/hellohello',
           query: {

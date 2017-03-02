@@ -40,9 +40,12 @@ describe('router', () => {
 
     const request = helloRequestWithSwagger();
 
-    const router = container.newObject('router');
-    router(request, httpMocks.createResponse(), function(err){
-      if(err) return done(err);
+    const router = container.newObject('router')({ prefix: 'controller.' });
+    router(request, httpMocks.createResponse(), function(err) {
+      if (err) {
+        return done(err);
+      }
+
       expect(controller.hello).to.have.been.calledOnce;
       done();
     });
@@ -56,8 +59,8 @@ describe('router', () => {
     const request = helloRequestNoSwagger();
     const response = httpMocks.createResponse();
 
-    const router = container.newObject('router');
-    router(request, response, function(err){
+    const router = container.newObject('router')({ prefix: 'controller.' });
+    router(request, response, function(err) {
       expect(err).to.be.an('error');
       expect(controller.hello).to.not.have.been.called;
       expect(response.statusCode).to.equal(404);
@@ -72,8 +75,8 @@ describe('router', () => {
     const request = helloRequestWithSwagger();
     const response = httpMocks.createResponse();
 
-    const router = container.newObject('router');
-    router(request, response, function(err){
+    const router = container.newObject('router')({ prefix: 'controller.' });
+    router(request, response, function(err) {
       expect(err).to.be.an('error');
       expect(controller.hello).to.not.have.been.called;
       done();
@@ -87,8 +90,8 @@ describe('router', () => {
 
     const request = helloRequestWithSwagger();
 
-    const router = container.newObject('router');
-    router(request, httpMocks.createResponse(), function(err){
+    const router = container.newObject('router')({ prefix: 'controller.' });
+    router(request, httpMocks.createResponse(), function(err) {
       expect(err).to.be.an('error');
       done();
     });

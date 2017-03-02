@@ -8,14 +8,14 @@ function(_, swaggerSpecification, swaggerMetadataModule, swaggerHelpersModule, l
   }
 
   function validateCallback(err, results) {
-    if (results && numberOfErrors(results) > 0) {
+    if (results && hasErrors(results)) {
       err = new Error('Swagger document(s) failed validation so the server cannot start');
       err.results = results;
     }
 
     log.debug('Validation: %s', err ? 'failed' : 'succeeded');
 
-    if(err) {
+    if (err) {
       this.callback(err);
     }
     else {
@@ -29,14 +29,15 @@ function(_, swaggerSpecification, swaggerMetadataModule, swaggerHelpersModule, l
     return count += (apiDeclaration ? apiDeclaration.errors.length : 0);
   }
 
-  function numberOfErrors(results) {
-    return results.errors.length + _.reduce(results.apiDeclarations || [], reduceInInitSwaggerTools, 0);
+  function hasErrors(results) {
+    return results.errors.length + _.reduce(results.apiDeclarations || [], reduceInInitSwaggerTools, 0) > 0;
   }
 
   function onSwaggerSpecError(err) {
     if (err.failedValidation === true) {
       swaggerHelpersModule.printValidationResults(spec.version, rlOrSO, undefined, results, true);
-    } else {
+    }
+    else {
       log.error('Error initializing middleware');
       log.error(err.stack);
     }
@@ -48,7 +49,7 @@ function(_, swaggerSpecification, swaggerMetadataModule, swaggerHelpersModule, l
     log.info('Identified Swagger version: %s', spec.version);
 
     initSwaggerTools(spec, swaggerSpecification, function (err, tools) {
-      if(err) {
+      if (err) {
         onSwaggerSpecError(err);
         reject(err);
       }
