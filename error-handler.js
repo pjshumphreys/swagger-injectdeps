@@ -1,6 +1,8 @@
 module.exports = require('injectdeps')(['logger'], function(logger) {
   return () => (err, req, res, next) => {
-    if(!err) next();
+    if(!err){ 
+      return next();
+    }
     res.statusCode = res.statusCode || err.statusCode || 500;
     let message = "Internal Server Error";
     if(res.statusCode < 500){
