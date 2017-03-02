@@ -1,6 +1,5 @@
 const expect = require('chai').expect;
 const injector = require('injectdeps');
-const engine = require('express');
 const lodash = require('lodash');
 const jsYaml = require('js-yaml');
 const fs = require('fs');
