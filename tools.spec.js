@@ -11,27 +11,28 @@ const httpMocks = require('node-mocks-http');
 
 const swaggerMetadata = require('swagger-tools/middleware/swagger-metadata');
 const swaggerHelpers = require('swagger-tools/lib/helpers');
+const swaggerFilepath = path.resolve(__dirname, './test/swagger.yaml');
 
 function standardBindings() {
   return injector.getContainer()
     .bindName('_').toPlainObject(lodash)
     .bindName('path').toPlainObject(path)
     .bindName('fs').toPlainObject(fs)
-    .bindName('swaggerMetadata').toPlainObject(swaggerMetadata)
-    .bindName('swaggerHelpers').toPlainObject(swaggerHelpers)
+    .bindName('swagger.metadata').toPlainObject(swaggerMetadata)
+    .bindName('swagger.helpers').toPlainObject(swaggerHelpers)
     .bindName('js-yaml').toPlainObject(jsYaml)
     .bindName('bunyan').toPlainObject(bunyan)
     .bindName('logger').toObject(logger)
-    .bindName('swaggerSpecification').toObject(require('./yaml-loader'))
-    .bindName('tools').toObject(require('./tools'));
+    .bindName('swagger.spec').toObject(require('./yaml-loader'))
+    .bindName('swagger.tools').toObject(require('./tools'));
 }
 
 describe('metadata', () => {
   it('should return an appropriate input data coercion middleware', (done) => {
     const container = standardBindings()
-      .bindName('swaggerFilePath').toScalarValue(path.resolve(__dirname, './test/swagger.yaml'));
+      .bindName('swagger.filePath').toScalarValue(swaggerFilepath);
 
-    const toolsPromise = container.newObject('tools').catch((err) => {
+    const toolsPromise = container.newObject('swagger.tools').catch((err) => {
       container.newObject('logger')('test').error(err);
 
       done(err);
@@ -61,9 +62,9 @@ describe('metadata', () => {
 
   it('should not add a swagger property to a route not specified in the yaml file', (done) => {
     const container = standardBindings()
-      .bindName('swaggerFilePath').toScalarValue('./test/swagger.yaml');
+      .bindName('swagger.filePath').toScalarValue(swaggerFilepath);
 
-    container.newObject('tools').then((tools) => {
+    container.newObject('swagger.tools').then((tools) => {
       const request = httpMocks.createRequest({
           method: 'GET',
           url: '/hellohello',

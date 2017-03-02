@@ -1,5 +1,5 @@
 module.exports = require('injectdeps')(
-['_', 'swaggerSpecification', 'swaggerMetadata', 'swaggerHelpers', 'logger'],
+['_', 'swagger.spec', 'swagger.metadata', 'swagger.helpers', 'logger'],
 function(_, swaggerSpecification, swaggerMetadataModule, swaggerHelpersModule, logger) {
   const log = logger('swagger.app');
 
@@ -25,12 +25,12 @@ function(_, swaggerSpecification, swaggerMetadataModule, swaggerHelpersModule, l
     }
   }
 
-  function reduceInInitSwaggerTools(count, apiDeclaration) {
+  function reduceInHasErrors(count, apiDeclaration) {
     return count += (apiDeclaration ? apiDeclaration.errors.length : 0);
   }
 
   function hasErrors(results) {
-    return results.errors.length + _.reduce(results.apiDeclarations || [], reduceInInitSwaggerTools, 0) > 0;
+    return results.errors.length + _.reduce(results.apiDeclarations || [], reduceInHasErrors, 0) > 0;
   }
 
   function onSwaggerSpecError(err) {
