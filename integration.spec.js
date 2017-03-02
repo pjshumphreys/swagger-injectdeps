@@ -10,6 +10,7 @@ const supertest = require('supertest');
 const logger = require('./test/logger');
 
 const swaggerMetadata = require('swagger-tools/middleware/swagger-metadata');
+const swaggerValidator = require('swagger-tools/middleware/swagger-validator');
 const swaggerHelpers = require('swagger-tools/lib/helpers');
 const swaggerFilepath = path.resolve(__dirname, './test/swagger.yaml');
 const testController = require('./test/hello_world.controller');
@@ -24,11 +25,13 @@ function standardBindings() {
     .bindName('bunyan').toPlainObject(bunyan)
     .bindName('logger').toObject(logger)
     .bindName('app.engine').toPlainObject(express)
+    .bindName('app.errorHandler').toObject(require('./error-handler'))
     .bindName('app.config').toPlainObject({ prefix: 'controller.' })
     .bindName('app.pre').toPlainObject([])
     .bindName('app.post').toPlainObject([])
     .bindName('app').toObject(require('./app'))
     .bindName('swagger.metadata').toPlainObject(swaggerMetadata)
+    .bindName('swagger.validator').toPlainObject(swaggerValidator)
     .bindName('swagger.helpers').toPlainObject(swaggerHelpers)
     .bindName('swagger.spec').toObject(require('./yaml-loader'))
     .bindName('swagger.tools').toObject(require('./tools'))
@@ -47,6 +50,16 @@ describe('integration', () => {
         .expect(200, {
           message: 'hello from Testy McTester'
         }, done);
+    });
+  });
+
+  it('should return 400 if a parameter is not valid', (done) => {
+    standardBindings().newObject('app').then((app) => {
+      supertest(app)
+        .get('/hello')
+        .query({ name: 'name longer than 15 characters' })
+        .expect('Content-Type', /json/)
+        .expect(400, done);
     });
   });
 });
