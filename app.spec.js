@@ -13,8 +13,7 @@ function standardBindings() {
     .bindName('bunyan').toPlainObject(bunyan)
     .bindName('logger').toObject(logger)
     .bindName('app.config').toPlainObject({})
-    .bindName('app.pre').toPlainObject([])
-    .bindName('app.post').toPlainObject([])
+    .bindName('container').toContainer()
     .bindName('app.errorHandler').toPlainObject(errorHandler())
     .bindName('swagger.validator').toPlainObject(mockValidator)
     .bindName('app').toObject(require('./app'));
