@@ -65,7 +65,7 @@ describe('router', () => {
     router(request, response, function(err) {
       expect(err).to.be.an('error');
       expect(controller.hello).to.not.have.been.called;
-      expect(response.statusCode).to.equal(404);
+      expect(err.statusCode).to.equal(404);
       done();
     });
   });

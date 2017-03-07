@@ -4,32 +4,38 @@ module.exports = require('injectdeps')(['container', 'logger'], function(contain
 
     var log = logger('swagger');
 
-    return (request, response, next) => {
-      const methodAndPath = `${request.method} ${request.path}`;
+    return (req, res, next) => {
+      const methodAndPath = `${req.method} ${req.path}`;
       // First check if the path is supported by our swagger definition
       // Note that we're assuming that another module has checked this and decorated the request object
       // The basic implementation is the swagger-tools/metadata middleware exposed through the tools module
-      if(!request.swagger || !request.swagger.operation) {
-        response.statusCode = 404;
-        return next(new Error(`Unsupported endpoint ${methodAndPath}`));
+      if(!req.swagger || !req.swagger.operation) {
+        let err = new Error(`Unsupported endpoint ${methodAndPath}`);
+        err.statusCode = 404;
+        return next(err);
       }
 
-      const controllerName = request.swagger.path['x-swagger-router-controller'];
+      const controllerName = req.swagger.path['x-swagger-router-controller'];
 
       if(!controllerName) {
         return next(new Error(`Swagger specification does not specify a controller for ${methodAndPath}`));
       }
 
       const fullControllerName = (params.prefix || '') + controllerName;
+
+      if(!container.hasObject(fullControllerName)) {
+        return next(new Error(`Could not find controller ${fullControllerName}`));
+      }
+
       let controller;
       try {
         controller = container.getObject(fullControllerName);
       }
-      catch (err) {
-        return next(new Error(`Could not find controller ${fullControllerName}`));
+      catch(err) {
+        return next(err);
       }
 
-      const methodName = request.swagger.operation.operationId;
+      const methodName = req.swagger.operation.operationId;
       if(!methodName) {
         return next(new Error(`Swagger specification does not specify an operationId for ${methodAndPath}`));
       }
@@ -37,7 +43,7 @@ module.exports = require('injectdeps')(['container', 'logger'], function(contain
       log.debug('Forwarding request %s to %s.%s', methodAndPath, controllerName, methodName);
 
       if(!controller.hasOwnProperty(methodName) || typeof controller[methodName] !== 'function'){
-        return next(new Error(`Controller ${fullControllerName} can't handle operation ${methodName}`));
+        return next(new Error(`Controller ${fullControllerName} doesn't handle operation ${methodName}`));
       }
 
       const nextHandler = (maybeError) => {
@@ -50,12 +56,29 @@ module.exports = require('injectdeps')(['container', 'logger'], function(contain
 
       const fakeResponse = {
         json(returnedObject) {
-          return response.contentType('application/json').json(returnedObject);
+          return res.contentType('application/json').json(returnedObject);
         }
       };
 
       try {
-        controller[methodName](request, fakeResponse, nextHandler);
+        const handlerResponse = controller[methodName](req, fakeResponse, nextHandler);
+
+        if(typeof handlerResponse !== 'undefined') {
+          if(handlerResponse.then && typeof handlerResponse.then === 'function') {
+            handlerResponse.then(result => {
+              res.json(result);
+              next();
+            });
+
+            if(handlerResponse.catch && typeof handlerResponse.catch === 'function') {
+              handlerResponse.catch(next);
+            }
+          }
+          else {
+            res.json(handlerResponse);
+            next();
+          }
+        }
       }
       catch (err) {
         // catch unhandled errors

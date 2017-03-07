@@ -4,15 +4,18 @@ module.exports = require('injectdeps')(['logger'], function(logger) {
       return next();
     }
 
+    if(!err.statusCode) {
+      err.statusCode = err.failedValidation ? 400 : 500;
+    }
+
     logger('swagger').error(err, 'Fell through swagger controller middleware');
 
-    res.statusCode = res.statusCode || err.statusCode || 500;
     let message = "Internal Server Error";
-    if(res.statusCode < 500) {
+    if(err.statusCode < 500) {
       message = (err instanceof Error) ? err.message : err.toString();
     }
 
-    res.status(res.statusCode);
+    res.status(err.statusCode);
     res.contentType("application/json");
     res.json({
       message,

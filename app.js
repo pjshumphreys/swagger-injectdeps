@@ -23,36 +23,32 @@ module.exports = require('injectdeps')(
 
     return swaggerTools
       .then((tools) => {
-        let err, pre, post;
+        let pre, post;
         const app = engine(config);
 
         app.use(tools.swaggerMetadata());
         app.use(swaggerValidator());
 
-        try {
+        if(container.hasObject('app.pre')) {
           pre = container.getObject('app.pre');
+
           if(Array.isArray(pre)) {
             for(let middleware in pre) {
               app.use(middleware);
             }
           }
         }
-        catch(err) {
-          //no pre were defined. don't worry about it
-        }
 
         app.use(swaggerRouter({ prefix: config.prefix }));
 
-        try {
+        if(container.hasObject('app.post')) {
           post = container.getObject('app.post');
+
           if(Array.isArray(post)) {
             for(let middleware in post) {
               app.use(middleware);
             }
           }
-        }
-        catch(err) {
-          //no pre were defined. don't worry about it
         }
 
         app.use(errorHandler());
