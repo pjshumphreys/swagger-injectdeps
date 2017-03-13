@@ -7,6 +7,7 @@ const bunyan = require('bunyan');
 const express = require('express');
 const supertest = require('supertest');
 const logger = require('./test/logger');
+const expect = require('chai').expect;
 
 const swaggerMetadata = require('swagger-tools/middleware/swagger-metadata');
 const swaggerValidator = require('swagger-tools/middleware/swagger-validator');
@@ -59,6 +60,29 @@ describe('integration', () => {
         .query({ name: 'name longer than 15 characters' })
         .expect('Content-Type', /json/)
         .expect(400, done);
+    });
+  });
+
+  it('should return the json swagger specification at /api-docs', () => {
+    return standardBindings().newObject('app').then((app) => {
+      return supertest(app)
+        .get('/api-docs')
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .then((response) => {
+          console.log(response.body);
+          expect(response.body).to.have.a.property('swagger').that.equals('2.0');
+          expect(response.body).to.have.a.property('consumes').that.is.an('array');
+          expect(response.body).to.have.a.property('info');
+          expect(response.body.info).to.have.a.property('title').that.equals('Hello World App');
+          expect(response.body).to.have.a.property('paths');
+          expect(response.body.paths).to.have.a.property('/hello').that
+            .has.a.property('x-swagger-router-controller').that.equals('hello_world');
+          expect(response.body).to.have.a.property('definitions');
+          expect(response.body.definitions).to.have.a.property('HelloWorldResponse').that
+            .has.a.property('required').that.is.an('array');
+
+        });
     });
   });
 });

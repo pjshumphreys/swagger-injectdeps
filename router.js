@@ -2,7 +2,7 @@ module.exports = require('injectdeps')(['container', 'logger'], function(contain
   return params => {
     params = params || {};
 
-    var log = logger('swagger');
+    const log = logger('swagger');
 
     return (req, res, next) => {
       const methodAndPath = `${req.method} ${req.path}`;

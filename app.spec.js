@@ -23,6 +23,7 @@ describe('app', () => {
   it('should be initialised with the provided tools', (done) => {
     const router = sinon.stub().returns(rawRouter);
     const rawApp = {
+      get: sinon.spy(),
       use: sinon.spy(),
       listen: sinon.spy()
     };
@@ -40,8 +41,10 @@ describe('app', () => {
       .then((app) => {
         expect(router).to.have.been.calledOnce;
         expect(app).to.have.a.property('listen').that.is.a('function');
-        //use was used once for swagger-metadata, once for swagger-validation and once for the router
+        // use was used once for swagger-metadata,
+        // once for swagger-validation and once for the router
         expect(rawApp.use).to.have.been.callCount(4);
+        expect(rawApp.get).to.have.been.calledOnce;
         done();
       })
       .catch((err) => done(err));

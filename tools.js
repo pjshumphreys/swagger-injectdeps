@@ -2,6 +2,7 @@ module.exports = require('injectdeps')(
 ['_', 'swagger.spec', 'swagger.metadata', 'swagger.helpers', 'logger'],
 function(_, swaggerSpecification, swaggerMetadataModule, swaggerHelpersModule, logger) {
   const log = logger('swagger.app');
+  let apiDocsCache = null;
 
   function initSwaggerTools(spec, rlOrSO, callback) {
     spec.validate.call(spec, rlOrSO, validateCallback.bind({ rlOrSO, callback }));
@@ -15,12 +16,15 @@ function(_, swaggerSpecification, swaggerMetadataModule, swaggerHelpersModule, l
 
     log.debug('Validation: %s', err ? 'failed' : 'succeeded');
 
+    apiDocsCache = JSON.stringify(this.rlOrSO, null, 2);
+
     if (err) {
       this.callback(err);
     }
     else {
       this.callback(null, {
-        swaggerMetadata: () => swaggerMetadataModule(this.rlOrSO)
+        swaggerMetadata: () => swaggerMetadataModule(this.rlOrSO),
+        apiDocsJson: () => apiDocsCache,
       });
     }
   }
