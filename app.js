@@ -20,11 +20,19 @@ module.exports = require('injectdeps')(
       logger
     ) {
     const log = logger('swagger.app');
+    const apiDocsPath = container.hasObject('swagger.apiDocsPath') ?
+        container.getObject('swagger.apiDocsPath') : '/api-docs';
 
     return swaggerTools
       .then((tools) => {
         let pre, post;
         const app = engine(config);
+
+        app.get(apiDocsPath, (req, res) => {
+          res.contentType('application/json')
+            .send(tools.apiDocsJson());
+          //do not call next, do not pass go
+        });
 
         app.use(tools.swaggerMetadata());
         app.use(swaggerValidator());
