@@ -41,8 +41,8 @@ module.exports = require('injectdeps')(
           pre = container.getObject('app.pre');
 
           if(Array.isArray(pre)) {
-            for(let middleware in pre) {
-              app.use(middleware);
+            for(let i in pre) {
+              app.use(pre[i]);
             }
           }
         }
@@ -53,8 +53,8 @@ module.exports = require('injectdeps')(
           post = container.getObject('app.post');
 
           if(Array.isArray(post)) {
-            for(let middleware in post) {
-              app.use(middleware);
+            for(let u in post) {
+              app.use(post[i]);
             }
           }
         }
