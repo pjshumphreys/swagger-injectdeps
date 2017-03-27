@@ -1,8 +1,7 @@
 module.exports = require('injectdeps')(
-['_', 'swagger.spec', 'swagger.metadata', 'swagger.helpers', 'logger'],
-function(_, swaggerSpecification, swaggerMetadataModule, swaggerHelpersModule, logger) {
+['swagger.spec', 'swagger.metadata', 'swagger.helpers', 'logger'],
+function(swaggerSpecification, swaggerMetadataModule, swaggerHelpersModule, logger) {
   const log = logger('swagger.app');
-  let apiDocsCache = null;
 
   function initSwaggerTools(spec, rlOrSO, callback) {
     spec.validate.call(spec, rlOrSO, validateCallback.bind({ rlOrSO, callback }));
@@ -16,25 +15,27 @@ function(_, swaggerSpecification, swaggerMetadataModule, swaggerHelpersModule, l
 
     log.debug('Validation: %s', err ? 'failed' : 'succeeded');
 
-    apiDocsCache = JSON.stringify(this.rlOrSO, null, 2);
-
     if (err) {
       this.callback(err);
     }
     else {
       this.callback(null, {
         swaggerMetadata: () => swaggerMetadataModule(this.rlOrSO),
-        apiDocsJson: () => apiDocsCache,
+        apiDocsJson: () => JSON.stringify(this.rlOrSO, null, 2),
       });
     }
   }
 
-  function reduceInHasErrors(count, apiDeclaration) {
-    return count += (apiDeclaration ? apiDeclaration.errors.length : 0);
-  }
-
   function hasErrors(results) {
-    return results.errors.length + _.reduce(results.apiDeclarations || [], reduceInHasErrors, 0) > 0;
+    let errorCount = results.errors.length;
+    const apiDeclarations = results.apiDeclarations || [];
+    const len = apiDeclarations.length;
+
+    for(let i = 0; i < len; i++) {
+      errorCount += apiDeclarations[i].errors.length;
+    }
+
+    return errorCount > 0;
   }
 
   function onSwaggerSpecError(err, specVersion, spec) {
