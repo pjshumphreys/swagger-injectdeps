@@ -55,6 +55,9 @@ module.exports = require('injectdeps')(['container', 'logger'], function(contain
       };
 
       const fakeResponse = {
+        status(code) {
+          return res.status(code);
+        },
         json(returnedObject) {
           return res.contentType('application/json').json(returnedObject);
         }
